@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
    RESEARCH DATA
-   Two lists: THEMES (the four strands of work) and PUBLICATIONS.
+   Two lists: THEMES (the five strands of work) and PUBLICATIONS.
 
    To add a paper: copy an existing block, change the fields, put it at the top
    of the list. Set  featured: true  to also show it on the home page.
@@ -43,6 +43,15 @@ const THEMES = [
       "Applied work on pricing and portfolio choice: country risk in earnings multiples, gold as an investment, market integration across Arab and emerging exchanges, and models for valuing a life.",
     long:
       "Applied asset pricing and valuation, including price–earnings models adjusted for country risk, the drivers of gold prices, co-integration between Arab, US and emerging equity markets, behavioural approaches to trading, and labour-theory based models for the valuation of life in economic loss analysis."
+  },
+  {
+    id: "nature-dependency",
+    tag: "Nature · Dependency",
+    title: "Nature dependency and financial risk",
+    blurb:
+      "Economies and firms depend on ecosystems that rarely appear on balance sheets. We examine how exposure to water, land, biodiversity and other natural systems can become operational and financial risk.",
+    long:
+      "Research on how corporate and economic activity relies on ecosystem services, how those dependencies can be measured across sectors and places, and how nature loss can transmit into firm performance, credit exposure and financial stability. This strand connects nature-related data with practical risk assessment for MENA markets and institutions."
   }
 ];
 

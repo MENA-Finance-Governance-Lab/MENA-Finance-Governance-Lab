@@ -3,16 +3,28 @@
    Design tokens live at the top. Change a value here and it propagates.
    =========================================================================== */
 
+/* Palette archive --------------------------------------------------------
+   Active palette: LOOK #1 — Institutional Teal
+
+   LOOK #2 — Cedar & Limestone
+   paper #F5F1E8 · paper-sunk #E8E2D5 · ink #17201D · slate #4F5B55
+   rule #CEC8BA · cedar #245A45 · sage #91AA96 · terracotta #B56E3B
+
+   LOOK #2 remains here for an exact rollback if we want to revisit it. */
 :root {
   /* Colour --------------------------------------------------------------- */
-  --paper:      #F0F3F2;   /* page background, a cool off-white              */
-  --paper-sunk: #E4E9E7;   /* recessed panels                                */
-  --ink:        #0D1A1D;   /* headings and dark sections                     */
-  --slate:      #4B5B5F;   /* body text                                      */
-  --rule:       #CBD4D1;   /* hairlines                                      */
-  --teal:       #0F5D57;   /* primary accent                                 */
-  --teal-soft:  #7FB0AA;   /* matrix cells, quiet accents                    */
-  --gold:       #A87A22;   /* single secondary accent, used sparingly        */
+  --paper:         #F0F3F2;   /* cool off-white page background                */
+  --paper-sunk:    #E4E9E7;   /* recessed panels                                */
+  --paper-bright:  #FFFFFF;   /* hover and lifted surfaces                      */
+  --ink:           #0D1A1D;   /* headings and dark sections                     */
+  --slate:         #4B5B5F;   /* body text                                      */
+  --rule:          #CBD4D1;   /* hairlines                                      */
+  --teal:          #0F5D57;   /* primary accent                                 */
+  --teal-soft:     #7FB0AA;   /* matrix cells and quiet accents                */
+  --gold:          #A87A22;   /* secondary accent                               */
+  --footer-text:   #A9B8B9;
+  --footer-link:   #E4EAE9;
+  --footer-muted:  #7E9291;
 
   /* Type ----------------------------------------------------------------- */
   --display: "Newsreader", Georgia, "Times New Roman", serif;
@@ -200,7 +212,7 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
 .btn--solid { background: var(--ink); color: var(--paper); }
 .btn--solid:hover { background: var(--teal); border-color: var(--teal); color: #fff; }
 
-/* Signature: the spillover matrix --------------------------------------- */
+/* Signature: the nature-dependency heatmap ------------------------------ */
 .matrix { display: grid; gap: 0.75rem; }
 
 /* One grid holds the labels and the cells, so the axes can never drift out of
@@ -232,19 +244,38 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   display: grid;
   gap: 2px;
   aspect-ratio: 1;
+  isolation: isolate;
+  cursor: crosshair;
 }
 
 .matrix__cell {
+  --wave-x: 0px;
+  --wave-y: 0px;
+  --wave-r: 0deg;
+  --wave-scale: 1;
   background: var(--teal);
   opacity: 0;
   animation: cell-in 0.5s ease forwards;
+  transform: translate3d(var(--wave-x), var(--wave-y), 0)
+             rotate(var(--wave-r)) scale(var(--wave-scale));
+  transform-origin: 50% 100%;
+  transition: transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  will-change: transform;
 }
-.matrix__cell--diag { background: var(--ink); }
+.matrix__grid--active .matrix__cell {
+  transition-duration: 90ms;
+  transition-timing-function: linear;
+}
 
 @keyframes cell-in { to { opacity: var(--o); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .matrix__cell { opacity: var(--o); animation: none; }
+  .matrix__grid { cursor: default; }
+  .matrix__cell {
+    opacity: var(--o);
+    animation: none;
+    transform: none;
+  }
 }
 
 .matrix__caption {
@@ -276,7 +307,7 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   text-decoration: none;
   transition: background-color 0.18s ease;
 }
-.theme:hover { background: #fff; }
+.theme:hover { background: var(--paper-bright); }
 .theme:hover .theme__title { color: var(--teal); }
 
 .theme__tag {
@@ -362,6 +393,7 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
+  object-position: center 15%;
   background: var(--paper-sunk);
   filter: grayscale(1) contrast(1.05);
 }
@@ -471,11 +503,11 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
 /* Footer ----------------------------------------------------------------- */
 .footer {
   background: var(--ink);
-  color: #A9B8B9;
+  color: var(--footer-text);
   margin-top: clamp(3.5rem, 8vw, 6rem);
   padding-block: 3.25rem 2.25rem;
 }
-.footer a { color: #E4EAE9; }
+.footer a { color: var(--footer-link); }
 .footer a:hover { color: #fff; }
 
 .footer__grid {
@@ -491,7 +523,7 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   font-size: 0.65rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #7E9291;
+  color: var(--footer-muted);
   margin: 0 0 0.8rem;
   font-weight: 500;
 }
@@ -504,7 +536,7 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   font-family: var(--mono);
   font-size: 0.62rem;
   letter-spacing: 0.08em;
-  color: #7E9291;
+  color: var(--footer-muted);
   display: flex;
   justify-content: space-between;
   gap: 1rem;

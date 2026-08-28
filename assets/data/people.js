@@ -26,6 +26,7 @@ const PI = {
   links: [
     { label: "CV", url: "https://sb.lau.edu.lb/images/Mahmoud%20Arayssi%20-CV.pdf" },
     { label: "LAU profile", url: "https://sb.lau.edu.lb/about/faculty-staff/dr-mahmoud-araissi.php" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/mahmoud-arayssi-6749167/" },
     { label: "Google Scholar", url: "" },
     { label: "ORCID", url: "" },
     { label: "RePEc", url: "" },

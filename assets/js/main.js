@@ -4,58 +4,136 @@
    include the containers they need, so this one file serves all four.
    --------------------------------------------------------------------------- */
 
-/* --- Hero: growth volatility spillover matrix ----------------------------
-   A stylised cross-country spillover matrix. The diagonal is a country's own
-   variance share; off-diagonal cells are what it receives from its neighbours.
-   Values are illustrative, not estimated. */
+/* --- Hero: nature-dependency heatmap -------------------------------------
+   A sector-by-ecosystem-service view of nature dependency. Values are
+   illustrative and intended to communicate the research question. */
 
 function renderMatrix() {
   const host = document.querySelector("[data-matrix]");
   if (!host) return;
 
-  const codes = SITE.matrixCountries;
-  const n = codes.length;
+  const matrix = SITE.natureMatrix;
+  const rows = matrix.rows;
+  const columns = matrix.columns;
 
-  // Deterministic pseudo-random so the pattern is stable across reloads.
-  function value(i, j) {
-    if (i === j) return 1;
-    const s = Math.sin((i + 1) * 12.9898 + (j + 1) * 78.233) * 43758.5453;
-    const r = s - Math.floor(s);
-    const decay = 1 / (1 + Math.abs(i - j) * 0.55);
-    return 0.08 + r * 0.62 * decay;
-  }
-
-  const yLabels = codes.map(function (c) { return "<span>" + c + "</span>"; }).join("");
-  const xLabels = codes.map(function (c) { return "<span>" + c + "</span>"; }).join("");
+  const yLabels = rows.map(function (item) {
+    return '<span title="' + item.label + '">' + item.code + "</span>";
+  }).join("");
+  const xLabels = columns.map(function (item) {
+    return '<span title="' + item.label + '">' + item.code + "</span>";
+  }).join("");
 
   let cells = "";
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      const v = value(i, j).toFixed(2);
-      const diag = i === j ? " matrix__cell--diag" : "";
+  for (let i = 0; i < rows.length; i++) {
+    for (let j = 0; j < columns.length; j++) {
+      const v = matrix.values[i][j].toFixed(2);
       const delay = ((i + j) * 22).toString();
       cells +=
-        '<div class="matrix__cell' + diag + '" style="--o:' + v +
+        '<div class="matrix__cell" data-row="' + i +
+        '" data-col="' + j + '" style="--o:' + v +
         ";animation-delay:" + delay + 'ms"></div>';
     }
   }
 
   host.innerHTML =
     '<div class="matrix__frame">' +
-      '<div class="matrix__ylabels" style="grid-template-rows:repeat(' + n + ',1fr)" aria-hidden="true">' +
+      '<div class="matrix__ylabels" style="grid-template-rows:repeat(' + rows.length + ',1fr)" aria-hidden="true">' +
         yLabels +
       "</div>" +
-      '<div class="matrix__grid" role="img" aria-label="Illustrative matrix of growth volatility spillovers between ' +
-        n + ' MENA economies" ' +
-        'style="grid-template-columns:repeat(' + n + ',1fr);grid-template-rows:repeat(' + n + ',1fr)">' +
+      '<div class="matrix__grid" role="img" aria-label="Illustrative heatmap of sector dependence on ecosystem services" ' +
+        'data-columns="' + columns.length + '" ' +
+        'style="grid-template-columns:repeat(' + columns.length + ',1fr);grid-template-rows:repeat(' + rows.length + ',1fr)">' +
         cells +
       "</div>" +
-      '<div class="matrix__xlabels" style="grid-template-columns:repeat(' + n + ',1fr)" aria-hidden="true">' +
+      '<div class="matrix__xlabels" style="grid-template-columns:repeat(' + columns.length + ',1fr)" aria-hidden="true">' +
         xLabels +
       "</div>" +
     "</div>" +
-    '<p class="matrix__caption">Growth volatility spillovers, MENA economies. Rows receive, columns transmit. ' +
-      "Illustrative pattern, not estimated output.</p>";
+    '<p class="matrix__caption">Sector dependence on ecosystem services. Rows show sectors; columns show services. ' +
+      "Darker cells indicate stronger dependency. Illustrative, not estimated data.</p>";
+
+  wireMatrixInteraction(host);
+}
+
+/* A soft, localised wave follows the pointer across the matrix. The effect is
+   intentionally small so the figure remains legible rather than becoming a
+   game. It is skipped entirely when the visitor prefers reduced motion. */
+function wireMatrixInteraction(host) {
+  const grid = host.querySelector(".matrix__grid");
+  const cells = Array.from(grid.querySelectorAll(".matrix__cell"));
+  const columns = Number(grid.dataset.columns);
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let pointer = { x: 0, y: 0 };
+  let frame = 0;
+  let hovering = false;
+
+  function settle() {
+    cells.forEach(function (cell) {
+      cell.style.removeProperty("--wave-x");
+      cell.style.removeProperty("--wave-y");
+      cell.style.removeProperty("--wave-r");
+      cell.style.removeProperty("--wave-scale");
+    });
+  }
+
+  function animate(time) {
+    if (!hovering || reducedMotion.matches) return;
+
+    const bounds = grid.getBoundingClientRect();
+    const radius = Math.max(120, bounds.width * 0.52);
+
+    cells.forEach(function (cell) {
+      const x = (Number(cell.dataset.col) + 0.5) * bounds.width / columns;
+      const y = (Number(cell.dataset.row) + 0.5) * bounds.height / columns;
+      const dx = x - pointer.x;
+      const dy = y - pointer.y;
+      const distance = Math.hypot(dx, dy);
+      const influence = Math.pow(Math.max(0, 1 - distance / radius), 1.65);
+      const phase = distance * 0.055 - time * 0.0045;
+      const breeze = Math.sin(phase) * influence;
+      const direction = dx / Math.max(distance, 1);
+
+      cell.style.setProperty("--wave-x", (breeze * 3.4 + direction * influence * 1.6).toFixed(2) + "px");
+      cell.style.setProperty("--wave-y", (-Math.abs(breeze) * 2.5).toFixed(2) + "px");
+      cell.style.setProperty("--wave-r", (breeze * 2.6 + direction * influence * 1.4).toFixed(2) + "deg");
+      cell.style.setProperty("--wave-scale", (1 + influence * 0.035).toFixed(3));
+    });
+
+    frame = requestAnimationFrame(animate);
+  }
+
+  grid.addEventListener("pointerenter", function (event) {
+    if (reducedMotion.matches) return;
+    const bounds = grid.getBoundingClientRect();
+    pointer.x = event.clientX - bounds.left;
+    pointer.y = event.clientY - bounds.top;
+    hovering = true;
+    grid.classList.add("matrix__grid--active");
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(animate);
+  });
+
+  grid.addEventListener("pointermove", function (event) {
+    const bounds = grid.getBoundingClientRect();
+    pointer.x = event.clientX - bounds.left;
+    pointer.y = event.clientY - bounds.top;
+  });
+
+  grid.addEventListener("pointerleave", function () {
+    hovering = false;
+    cancelAnimationFrame(frame);
+    grid.classList.remove("matrix__grid--active");
+    settle();
+  });
+
+  reducedMotion.addEventListener("change", function () {
+    if (reducedMotion.matches) {
+      hovering = false;
+      cancelAnimationFrame(frame);
+      grid.classList.remove("matrix__grid--active");
+      settle();
+    }
+  });
 }
 
 /* --- Research theme cards ----------------------------------------------- */

@@ -123,9 +123,9 @@ typeface on the site comes from there.
 
 ## Notes
 
-- The hero matrix is illustrative, not estimated output, and the caption says so.
-  It is generated in `main.js` (`renderMatrix`) from a fixed pseudo-random seed,
-  so it looks the same on every load. Country codes come from `site.js`.
+- The hero heatmap is illustrative, not estimated output, and the caption says so.
+  Its sector labels, ecosystem-service labels and values live in the
+  `natureMatrix` object in `site.js`.
 - Reduced-motion preferences are respected; the matrix appears without animating.
 - If the publication list ever gets long enough to be a chore, the natural next
   step is moving to Jekyll (which GitHub Pages runs natively) and keeping papers
