@@ -36,10 +36,10 @@ const PI = {
 
 const TEAM = [
   {
-    name: "Postdoctoral researcher",
+    name: "Coming soon",
     role: "Postdoctoral Fellow",
     photo: "",
-    note: "Replace this block with the postdoc's name, a one-line description of what they work on, and their links.",
+    note: "The lab's postdoctoral researcher will be announced soon.",
     links: [
       { label: "Website", url: "" },
       { label: "Google Scholar", url: "" }
