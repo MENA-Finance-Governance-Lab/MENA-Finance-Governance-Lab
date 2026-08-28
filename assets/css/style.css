@@ -397,6 +397,8 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
 .strand:first-of-type { border-top: 0; padding-top: 0; }
 .strand__head { max-width: 62ch; margin-bottom: 2rem; }
 .strand__head h2 { margin-bottom: 0.5rem; }
+.strand__projects { margin-top: 2.25rem; }
+.strand__projects .eyebrow { margin-bottom: 0.65rem; }
 
 /* People ----------------------------------------------------------------- */
 .pi {

@@ -202,6 +202,17 @@ function renderStrands() {
       .sort(function (a, b) { return b.year - a.year; })
       .map(publicationHTML)
       .join("");
+    const projects = typeof WORKING_PAPERS === "undefined" ? "" : WORKING_PAPERS
+      .filter(function (p) { return p.theme === t.id; })
+      .map(workingPaperHTML)
+      .join("");
+    const publishedHTML = papers ? '<ul class="pubs">' + papers + "</ul>" : "";
+    const projectsHTML = projects
+      ? '<div class="strand__projects">' +
+          '<span class="eyebrow eyebrow--muted">Current projects</span>' +
+          '<ul class="pubs">' + projects + "</ul>" +
+        "</div>"
+      : "";
 
     return (
       '<section class="strand" id="' + t.id + '">' +
@@ -210,13 +221,30 @@ function renderStrands() {
           "<h2>" + t.title + "</h2>" +
           "<p>" + t.long + "</p>" +
         "</div>" +
-        '<ul class="pubs">' + papers + "</ul>" +
+        publishedHTML +
+        projectsHTML +
       "</section>"
     );
   }).join("");
 }
 
 /* Research page: work in progress */
+function workingPaperHTML(p) {
+  const authors = p.authors
+    ? '<p class="pub__meta"><span class="pub__authors">' + p.authors + "</span></p>"
+    : "";
+
+  return (
+    '<li class="pub">' +
+      '<div class="pub__year">' + p.status + "</div>" +
+      "<div>" +
+        '<h3 class="pub__title">' + p.title + "</h3>" +
+        authors +
+      "</div>" +
+    "</li>"
+  );
+}
+
 function renderWorkingPapers() {
   const host = document.querySelector("[data-working]");
   if (!host) return;
@@ -226,17 +254,7 @@ function renderWorkingPapers() {
     return;
   }
 
-  host.innerHTML = WORKING_PAPERS.map(function (p) {
-    return (
-      '<li class="pub">' +
-        '<div class="pub__year">' + p.status + "</div>" +
-        "<div>" +
-          '<h3 class="pub__title">' + p.title + "</h3>" +
-          '<p class="pub__meta"><span class="pub__authors">' + p.authors + "</span></p>" +
-        "</div>" +
-      "</li>"
-    );
-  }).join("");
+  host.innerHTML = WORKING_PAPERS.map(workingPaperHTML).join("");
 }
 
 /* --- People -------------------------------------------------------------- */

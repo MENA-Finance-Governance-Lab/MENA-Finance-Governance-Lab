@@ -260,8 +260,33 @@ const PUBLICATIONS = [
    not show unfinished work. */
 const WORKING_PAPERS = [
   {
+    theme: "macro-financial",
     authors: "Arayssi, M.",
     title: "Growth volatility spillovers across countries: oil and political conflict in MENA",
     status: "In progress"
+  },
+  {
+    theme: "macro-financial",
+    authors: "",
+    title: "Regime-Dependent Determinants of Systemic Banking Crises: Evidence from a Finite-Mixture Logit Model",
+    status: "Under review"
+  },
+  {
+    theme: "governance-esg",
+    authors: "",
+    title: "The Illusion of Predictability: Structural Heterogeneity and Informational Noise in Corporate Greenwashing",
+    status: "Under review"
+  },
+  {
+    theme: "financial-inclusion",
+    authors: "",
+    title: "What Do Lenders See? Disentangling Gender Signals from Organizational Substance in Credit Markets",
+    status: "Under review"
+  },
+  {
+    theme: "governance-esg",
+    authors: "",
+    title: "ESG Misrepresentation in Corporate Sustainability Communication: A Comprehensive Review of Greenwashing, Brownwashing, Greenhushing, and CSR Decoupling",
+    status: "Under review"
   }
 ];
