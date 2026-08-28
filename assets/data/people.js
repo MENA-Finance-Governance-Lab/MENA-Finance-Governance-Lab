@@ -46,12 +46,12 @@ const TEAM = [
     ]
   },
   {
-    name: "Research assistant",
+    name: "Malek Itani",
     role: "Research Assistant",
-    photo: "",
-    note: "Replace this block with the RA's name and the projects they support.",
+    photo: "assets/img/malek-itani.png",
+    note: "Malek holds a Master of Science in Applied Statistics and focuses on statistical methodology and machine learning.",
     links: [
-      { label: "Email", url: "" }
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/malek-ma-itani/" }
     ]
   }
 ];

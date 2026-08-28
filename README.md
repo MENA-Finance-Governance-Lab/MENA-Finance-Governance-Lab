@@ -84,7 +84,8 @@ Open `assets/data/research.js` and copy an existing block into the
 ```
 
 Theme ids currently in use: `finance-growth`, `governance-esg`,
-`macro-financial`, `markets-valuation`.
+`macro-financial`, `markets-valuation`, `nature-dependency`,
+`financial-inclusion`.
 
 **Add or change a person**
 `assets/data/people.js`. Links with an empty `url` are skipped, so you can leave

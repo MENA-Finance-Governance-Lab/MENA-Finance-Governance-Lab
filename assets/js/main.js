@@ -17,10 +17,10 @@ function renderMatrix() {
   const columns = matrix.columns;
 
   const yLabels = rows.map(function (item) {
-    return '<span title="' + item.label + '">' + item.code + "</span>";
+    return "<span>" + item.label + "</span>";
   }).join("");
   const xLabels = columns.map(function (item) {
-    return '<span title="' + item.label + '">' + item.code + "</span>";
+    return "<span>" + item.label + "</span>";
   }).join("");
 
   let cells = "";
@@ -73,6 +73,8 @@ function wireMatrixInteraction(host) {
       cell.style.removeProperty("--wave-y");
       cell.style.removeProperty("--wave-r");
       cell.style.removeProperty("--wave-scale");
+      cell.style.removeProperty("--cell-color");
+      cell.style.removeProperty("--cell-glow");
     });
   }
 
@@ -97,6 +99,9 @@ function wireMatrixInteraction(host) {
       cell.style.setProperty("--wave-y", (-Math.abs(breeze) * 2.5).toFixed(2) + "px");
       cell.style.setProperty("--wave-r", (breeze * 2.6 + direction * influence * 1.4).toFixed(2) + "deg");
       cell.style.setProperty("--wave-scale", (1 + influence * 0.035).toFixed(3));
+      cell.style.setProperty("--cell-color", "color-mix(in srgb, var(--gold) " +
+        (influence * 82).toFixed(1) + "%, var(--teal))");
+      cell.style.setProperty("--cell-glow", (1 + influence * 0.2).toFixed(2));
     });
 
     frame = requestAnimationFrame(animate);

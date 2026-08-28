@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
    RESEARCH DATA
-   Two lists: THEMES (the five strands of work) and PUBLICATIONS.
+   Two lists: THEMES (the six strands of work) and PUBLICATIONS.
 
    To add a paper: copy an existing block, change the fields, put it at the top
    of the list. Set  featured: true  to also show it on the home page.
@@ -52,6 +52,15 @@ const THEMES = [
       "Economies and firms depend on ecosystems that rarely appear on balance sheets. We examine how exposure to water, land, biodiversity and other natural systems can become operational and financial risk.",
     long:
       "Research on how corporate and economic activity relies on ecosystem services, how those dependencies can be measured across sectors and places, and how nature loss can transmit into firm performance, credit exposure and financial stability. This strand connects nature-related data with practical risk assessment for MENA markets and institutions."
+  },
+  {
+    id: "financial-inclusion",
+    tag: "Inclusion · Gender",
+    title: "Financial inclusion and gender finance",
+    blurb:
+      "Access to credit, savings, insurance and digital payments remains uneven across the region, especially for women. We study the institutions, household constraints and market designs that shape who participates in finance.",
+    long:
+      "Research on access to and use of financial services across MENA, with particular attention to gender gaps in accounts, credit, entrepreneurship, insurance and digital finance. This strand examines how laws, social norms, labour-market conditions and product design affect women's financial agency and the effectiveness of inclusive-finance policy."
   }
 ];
 

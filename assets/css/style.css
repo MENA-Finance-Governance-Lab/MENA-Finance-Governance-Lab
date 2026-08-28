@@ -229,16 +229,25 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
 .matrix__xlabels {
   display: grid;
   font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.04em;
+  font-size: 0.54rem;
+  letter-spacing: 0.02em;
   color: var(--slate);
 }
-.matrix__ylabels { grid-area: 1 / 1; align-items: center; justify-items: end; }
+.matrix__ylabels {
+  grid-area: 1 / 1;
+  align-items: center;
+  justify-items: end;
+  min-width: 5.1rem;
+}
 .matrix__grid    { grid-area: 1 / 2; }
 .matrix__xlabels { grid-area: 2 / 2; justify-items: center; }
 
-.matrix__ylabels span { line-height: 1; }
-.matrix__xlabels span { writing-mode: vertical-rl; line-height: 1; }
+.matrix__ylabels span { line-height: 1.05; text-align: right; }
+.matrix__xlabels span {
+  writing-mode: vertical-rl;
+  line-height: 1;
+  white-space: nowrap;
+}
 
 .matrix__grid {
   display: grid;
@@ -246,6 +255,8 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   aspect-ratio: 1;
   isolation: isolate;
   cursor: crosshair;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .matrix__cell {
@@ -253,17 +264,21 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   --wave-y: 0px;
   --wave-r: 0deg;
   --wave-scale: 1;
-  background: var(--teal);
+  background-color: var(--cell-color, var(--teal));
+  filter: saturate(var(--cell-glow, 1));
   opacity: 0;
   animation: cell-in 0.5s ease forwards;
   transform: translate3d(var(--wave-x), var(--wave-y), 0)
              rotate(var(--wave-r)) scale(var(--wave-scale));
   transform-origin: 50% 100%;
-  transition: transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  border-radius: 2px;
+  transition: transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1),
+              background-color 220ms ease,
+              filter 220ms ease;
   will-change: transform;
 }
 .matrix__grid--active .matrix__cell {
-  transition-duration: 90ms;
+  transition-duration: 90ms, 140ms, 140ms;
   transition-timing-function: linear;
 }
 
@@ -286,7 +301,9 @@ p { margin: 0 0 1.1em; max-width: var(--measure); }
   color: var(--slate);
   border-top: 1px solid var(--rule);
   padding-top: 0.7rem;
-  margin: 0.25rem 0 0;
+  width: calc(100% - 5.55rem);
+  margin: 0.25rem 0 0 auto;
+  text-align: center;
 }
 
 /* Theme cards ------------------------------------------------------------ */
