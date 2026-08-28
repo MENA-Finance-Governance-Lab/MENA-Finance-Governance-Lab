@@ -78,10 +78,12 @@ Open `assets/data/research.js` and copy an existing block into the
   authors: "Arayssi, M. and Someone, A.",
   title: "The title of the paper",
   outlet: "Journal Name, 12(3), 45–67",
-  url: "https://doi.org/...",    // leave as "" if there isn't one
-  featured: true                 // optional; also shows it on the home page
+  url: "https://doi.org/..."     // leave as "" if there isn't one
 },
 ```
+
+The five publications with the newest years appear automatically on the home
+page.
 
 Theme ids currently in use: `finance-growth`, `governance-esg`,
 `macro-financial`, `markets-valuation`, `nature-dependency`,

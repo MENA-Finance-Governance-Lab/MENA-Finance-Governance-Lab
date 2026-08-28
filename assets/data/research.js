@@ -3,7 +3,7 @@
    Two lists: THEMES (the six strands of work) and PUBLICATIONS.
 
    To add a paper: copy an existing block, change the fields, put it at the top
-   of the list. Set  featured: true  to also show it on the home page.
+   of the list. The five newest papers automatically appear on the home page.
    The  theme  field must match one of the THEMES ids below.
    --------------------------------------------------------------------------- */
 
@@ -67,12 +67,75 @@ const THEMES = [
 const PUBLICATIONS = [
   {
     theme: "governance-esg",
+    year: 2026,
+    authors: "Jizi, M. I. and Arayssi, M.",
+    title: "Do investors value GCC firms’ social performance?",
+    outlet: "International Journal of Disclosure and Governance, 23(1), 23–35",
+    url: "https://doi.org/10.1057/s41310-024-00274-z"
+  },
+  {
+    theme: "governance-esg",
+    year: 2025,
+    authors: "Arayssi, M. and Bejaoui, A.",
+    title: "Family firms and corporate governance: balancing control and reputation and image in modern business",
+    outlet: "The Journal of Entrepreneurship, 34(4), 797–835",
+    url: "https://doi.org/10.1177/09713557251401027"
+  },
+  {
+    theme: "nature-dependency",
+    year: 2025,
+    authors: "Al Shami, F., Arayssi, M., Marrouch, W. and Sayour, N.",
+    title: "Natural resource dependence and war nexus: new insights",
+    outlet: "Defence and Peace Economics, 36(7), 990–1006",
+    url: "https://doi.org/10.1080/10242694.2025.2450842"
+  },
+  {
+    theme: "nature-dependency",
+    year: 2025,
+    authors: "Hamdan, A., Yunis, M., Arayssi, M. and Fakih, K.",
+    title: "The impact of fluctuating exchange rates and customs rates on the economic sustainability of solar energy business in Lebanon",
+    outlet: "Journal of Infrastructure, Policy and Development, 9(1), 9811",
+    url: "https://doi.org/10.24294/jipd9811"
+  },
+  {
+    theme: "markets-valuation",
+    year: 2014,
+    authors: "Arayssi, M. and Yassine, N.",
+    title: "Net present value maximizing inventory analysis with two product types and credit facilities",
+    outlet: "SSRN working paper no. 2431112",
+    url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2431112"
+  },
+  {
+    theme: "markets-valuation",
+    year: 2010,
+    authors: "Arayssi, M.",
+    title: "Market valuation of corporate reputation",
+    outlet: "SSRN working paper no. 1639555",
+    url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1639555"
+  },
+  {
+    theme: "macro-financial",
+    year: 2008,
+    authors: "Arayssi, M.",
+    title: "Pegging to the dollar and the feasibility of the proposed currency area in the GCC",
+    outlet: "International Review of Business Research Papers, 4(5), 74–86",
+    url: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ynX7S2kAAAAJ&citation_for_view=ynX7S2kAAAAJ:48xauSegjOkC"
+  },
+  {
+    theme: "macro-financial",
+    year: 1995,
+    authors: "Arayssi, M.",
+    title: "Strategic discipline in monetary policy with private information and supply shocks: optimal targeting horizons",
+    outlet: "Indiana University, Ph.D. dissertation",
+    url: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ynX7S2kAAAAJ&citation_for_view=ynX7S2kAAAAJ:CaZNVDsoPx4C"
+  },
+  {
+    theme: "governance-esg",
     year: 2024,
     authors: "Arayssi, M. and Jizi, M.",
     title: "Royal family board directors and the level of ESG disclosures in GCC listed firms",
     outlet: "Journal of Accounting &amp; Organizational Change, 20(1), 58–83",
-    url: "https://doi.org/10.1108/JAOC-08-2022-0123",
-    featured: true
+    url: "https://doi.org/10.1108/JAOC-08-2022-0123"
   },
   {
     theme: "markets-valuation",
@@ -80,8 +143,7 @@ const PUBLICATIONS = [
     authors: "Arayssi, M. and Yassine, N.",
     title: "International price earnings and country risk model in an Asian context",
     outlet: "Journal of Asia Business Studies, 18(1), 124–135",
-    url: "https://www.emerald.com/insight/publication/issn/1558-7894",
-    featured: true
+    url: "https://www.emerald.com/insight/publication/issn/1558-7894"
   },
   {
     theme: "finance-growth",
@@ -89,8 +151,7 @@ const PUBLICATIONS = [
     authors: "Arayssi, M.",
     title: "Reframing sustainable finance: the case of Lebanon",
     outlet: "Economic Research Forum",
-    url: "https://theforum.erf.org.eg/2023/07/24/reframing-sustainable-finance-lessons-from-lebanon/",
-    featured: true
+    url: "https://theforum.erf.org.eg/2023/07/24/reframing-sustainable-finance-lessons-from-lebanon/"
   },
   {
     theme: "finance-growth",
@@ -98,8 +159,7 @@ const PUBLICATIONS = [
     authors: "Arayssi, M., Fakih, A. and Haimoun, N.",
     title: "Skill mismatch, nepotism, job satisfaction, and young females in the MENA region",
     outlet: "Econometrics, 11(2), 16",
-    url: "https://doi.org/10.3390/econometrics11020016",
-    featured: true
+    url: "https://doi.org/10.3390/econometrics11020016"
   },
   {
     theme: "markets-valuation",
@@ -115,8 +175,7 @@ const PUBLICATIONS = [
     authors: "Abosedra, S., Arayssi, M., Sita, B. B. and Mutshinda, C.",
     title: "Exploring GDP growth volatility spillovers across countries",
     outlet: "Economic Modelling, 89, 577–589",
-    url: "https://doi.org/10.1016/j.econmod.2019.11.015",
-    featured: true
+    url: "https://doi.org/10.1016/j.econmod.2019.11.015"
   },
   {
     theme: "governance-esg",

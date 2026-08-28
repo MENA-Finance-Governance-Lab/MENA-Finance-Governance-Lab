@@ -180,13 +180,14 @@ function publicationHTML(p) {
   );
 }
 
-/* Home page: the handful marked  featured: true  */
+/* Home page: the five newest publications */
 function renderFeatured() {
   const host = document.querySelector("[data-featured]");
   if (!host) return;
 
-  host.innerHTML = PUBLICATIONS
-    .filter(function (p) { return p.featured; })
+  host.innerHTML = PUBLICATIONS.slice()
+    .sort(function (a, b) { return b.year - a.year; })
+    .slice(0, 5)
     .map(publicationHTML)
     .join("");
 }
