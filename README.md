@@ -126,10 +126,14 @@ typeface on the site comes from there.
 
 ## Notes
 
-- The hero heatmap is illustrative, not estimated output, and the caption says so.
-  Its sector labels, ecosystem-service labels and values live in the
-  `natureMatrix` object in `site.js`.
-- Reduced-motion preferences are respected; the matrix appears without animating.
+- The hero uses a geographic MENA map backed by Natural Earth country geometry.
+  Its complete curated network of trade, investment and financial-spillover
+  links remains visible at all times, runs between capital-city coordinates
+  marked by faint endpoint rings, and is grounded in WTO, IMF and World Bank
+  sources. Hovering over a country shows
+  its capital, currency and subregion;
+  the map has no click or persistent selection state. Arc animation becomes
+  static when a visitor prefers reduced motion.
 - If the publication list ever gets long enough to be a chore, the natural next
   step is moving to Jekyll (which GitHub Pages runs natively) and keeping papers
   in a YAML file. The current setup should hold for a long while.

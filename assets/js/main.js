@@ -4,141 +4,239 @@
    include the containers they need, so this one file serves all four.
    --------------------------------------------------------------------------- */
 
-/* --- Hero: nature-dependency heatmap -------------------------------------
-   A sector-by-ecosystem-service view of nature dependency. Values are
-   illustrative and intended to communicate the research question. */
+/* --- Hero: MENA connection map ------------------------------------------
+   Country geometry comes from Natural Earth. Connection layers are curated
+   from WTO regional agreements and IMF/World Bank work on GCC trade,
+   investment, remittances and financial spillovers. They communicate
+   documented corridors, not live bilateral values or estimated magnitudes. */
 
-function renderMatrix() {
-  const host = document.querySelector("[data-matrix]");
+const MAP_CAPITALS = {
+  DZA: [3.0588, 36.7538], BHR: [50.586, 26.2285], EGY: [31.2357, 30.0444],
+  IRN: [51.389, 35.6892], IRQ: [44.3661, 33.3152], ISR: [35.2137, 31.7683],
+  JOR: [35.9106, 31.9539], KWT: [47.9774, 29.3759], LBN: [35.5018, 33.8938],
+  LBY: [13.1913, 32.8872], MAR: [-6.8498, 34.0209], OMN: [58.4059, 23.588],
+  PSX: [35.2034, 31.9038], QAT: [51.531, 25.2854], SAU: [46.6753, 24.7136],
+  SYR: [36.2765, 33.5138], TUN: [10.1815, 36.8065], TUR: [32.8597, 39.9334],
+  ARE: [54.3773, 24.4539], YEM: [44.2067, 15.3694]
+};
+
+const MAP_NAMES = {
+  DZA: "Algeria", BHR: "Bahrain", EGY: "Egypt", IRN: "Iran",
+  IRQ: "Iraq", ISR: "Israel", JOR: "Jordan", KWT: "Kuwait",
+  LBN: "Lebanon", LBY: "Libya", MAR: "Morocco", OMN: "Oman",
+  PSX: "Palestine", QAT: "Qatar", SAU: "Saudi Arabia", SYR: "Syria",
+  TUN: "Tunisia", TUR: "Turkey", ARE: "United Arab Emirates", YEM: "Yemen"
+};
+
+const MAP_STATS = {
+  DZA: { capital: "Algiers", currency: "Algerian dinar", subregion: "Maghreb" },
+  BHR: { capital: "Manama", currency: "Bahraini dinar", subregion: "GCC" },
+  EGY: { capital: "Cairo", currency: "Egyptian pound", subregion: "North Africa" },
+  IRN: { capital: "Tehran", currency: "Iranian rial", subregion: "Middle East" },
+  IRQ: { capital: "Baghdad", currency: "Iraqi dinar", subregion: "Middle East" },
+  ISR: { capital: "Jerusalem", currency: "Israeli new shekel", subregion: "Levant" },
+  JOR: { capital: "Amman", currency: "Jordanian dinar", subregion: "Levant" },
+  KWT: { capital: "Kuwait City", currency: "Kuwaiti dinar", subregion: "GCC" },
+  LBN: { capital: "Beirut", currency: "Lebanese pound", subregion: "Levant" },
+  LBY: { capital: "Tripoli", currency: "Libyan dinar", subregion: "North Africa" },
+  MAR: { capital: "Rabat", currency: "Moroccan dirham", subregion: "Maghreb" },
+  OMN: { capital: "Muscat", currency: "Omani rial", subregion: "GCC" },
+  PSX: { capital: "Ramallah (administrative center)", currency: "Israeli new shekel / Jordanian dinar", subregion: "Levant" },
+  QAT: { capital: "Doha", currency: "Qatari riyal", subregion: "GCC" },
+  SAU: { capital: "Riyadh", currency: "Saudi riyal", subregion: "GCC" },
+  SYR: { capital: "Damascus", currency: "Syrian pound", subregion: "Levant" },
+  TUN: { capital: "Tunis", currency: "Tunisian dinar", subregion: "Maghreb" },
+  TUR: { capital: "Ankara", currency: "Turkish lira", subregion: "Eastern Mediterranean" },
+  ARE: { capital: "Abu Dhabi", currency: "UAE dirham", subregion: "GCC" },
+  YEM: { capital: "Sana'a", currency: "Yemeni rial", subregion: "Arabian Peninsula" }
+};
+
+const MAP_CONNECTIONS = [
+  /* Intra-GCC trade and value-chain integration (WTO; IMF 2024). */
+  { from: "ARE", to: "SAU", type: "trade", label: "Intra-GCC trade and value chains" },
+  { from: "ARE", to: "KWT", type: "trade", label: "Intra-GCC trade" },
+  { from: "ARE", to: "QAT", type: "trade", label: "Intra-GCC trade" },
+  { from: "ARE", to: "BHR", type: "trade", label: "Intra-GCC trade" },
+  { from: "ARE", to: "OMN", type: "trade", label: "Intra-GCC trade" },
+  { from: "SAU", to: "KWT", type: "trade", label: "Intra-GCC trade" },
+  { from: "SAU", to: "QAT", type: "trade", label: "Intra-GCC trade" },
+  { from: "SAU", to: "BHR", type: "trade", label: "Intra-GCC trade" },
+  { from: "SAU", to: "OMN", type: "trade", label: "Intra-GCC trade" },
+
+  /* Agadir trade agreement (WTO); wider Pan-Arab infrastructure trade. */
+  { from: "EGY", to: "JOR", type: "trade", label: "Agadir trade area" },
+  { from: "EGY", to: "MAR", type: "trade", label: "Agadir trade area" },
+  { from: "EGY", to: "TUN", type: "trade", label: "Agadir trade area" },
+  { from: "JOR", to: "MAR", type: "trade", label: "Agadir trade area" },
+  { from: "JOR", to: "TUN", type: "trade", label: "Agadir trade area" },
+  { from: "MAR", to: "TUN", type: "trade", label: "Agadir trade area" },
+  { from: "DZA", to: "MAR", type: "trade", label: "Cross-border infrastructure trade" },
+  { from: "DZA", to: "TUN", type: "trade", label: "Maghreb trade corridor" },
+  { from: "LBY", to: "TUN", type: "trade", label: "Cross-border infrastructure trade" },
+  { from: "LBY", to: "EGY", type: "trade", label: "Cross-border infrastructure trade" },
+
+  /* GCC investment corridors to the rest of MENA (World Bank; IMF). */
+  { from: "ARE", to: "EGY", type: "investment", label: "GCC investment corridor" },
+  { from: "SAU", to: "EGY", type: "investment", label: "GCC investment corridor" },
+  { from: "KWT", to: "EGY", type: "investment", label: "GCC investment corridor" },
+  { from: "ARE", to: "JOR", type: "investment", label: "GCC investment corridor" },
+  { from: "KWT", to: "JOR", type: "investment", label: "GCC investment corridor" },
+  { from: "ARE", to: "MAR", type: "investment", label: "GCC investment corridor" },
+  { from: "SAU", to: "MAR", type: "investment", label: "GCC investment corridor" },
+  { from: "ARE", to: "TUN", type: "investment", label: "GCC investment corridor" },
+  { from: "SAU", to: "TUN", type: "investment", label: "GCC investment corridor" },
+  { from: "ARE", to: "IRQ", type: "investment", label: "Regional investment and trade" },
+  { from: "SAU", to: "IRQ", type: "investment", label: "Regional investment and trade" },
+  { from: "ARE", to: "LBN", type: "investment", label: "GCC investment linkage" },
+  { from: "EGY", to: "PSX", type: "investment", label: "Cross-border infrastructure investment" },
+  { from: "JOR", to: "PSX", type: "investment", label: "Cross-border infrastructure investment" },
+
+  /* IMF-documented banking, remittance and growth-spillover channels. */
+  { from: "SAU", to: "ARE", type: "financial", label: "Banking and market spillovers" },
+  { from: "SAU", to: "BHR", type: "financial", label: "Growth and financial spillovers" },
+  { from: "SAU", to: "JOR", type: "financial", label: "Remittance and financial spillovers" },
+  { from: "SAU", to: "LBN", type: "financial", label: "Remittance and financial spillovers" },
+  { from: "SAU", to: "EGY", type: "financial", label: "Remittance and financial spillovers" },
+  { from: "SAU", to: "YEM", type: "financial", label: "Remittance and growth spillovers" },
+  { from: "LBN", to: "SYR", type: "financial", label: "Cross-border banking exposure" }
+];
+
+function renderMenaMap() {
+  const host = document.querySelector("[data-mena-map]");
   if (!host) return;
 
-  const matrix = SITE.natureMatrix;
-  const rows = matrix.rows;
-  const columns = matrix.columns;
+  const countriesGroup = host.querySelector("[data-map-countries]");
+  const endpointsGroup = host.querySelector("[data-map-endpoints]");
+  const arcsGroup = host.querySelector("[data-map-arcs]");
+  const countryReadout = host.querySelector("[data-map-country]");
+  const summaryReadout = host.querySelector("[data-map-summary]");
+  const svgNamespace = "http://www.w3.org/2000/svg";
 
-  const yLabels = rows.map(function (item) {
-    return "<span>" + item.label + "</span>";
-  }).join("");
-  const xLabels = columns.map(function (item) {
-    return "<span>" + item.label + "</span>";
-  }).join("");
-
-  let cells = "";
-  for (let i = 0; i < rows.length; i++) {
-    for (let j = 0; j < columns.length; j++) {
-      const v = matrix.values[i][j].toFixed(2);
-      const delay = ((i + j) * 22).toString();
-      cells +=
-        '<div class="matrix__cell" data-row="' + i +
-        '" data-col="' + j + '" style="--o:' + v +
-        ";animation-delay:" + delay + 'ms"></div>';
-    }
+  function project(coordinates) {
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
+    const scale = 8.2;
+    return [
+      320 + (longitude + 17) * scale,
+      135 + (43 - latitude) * scale
+    ];
   }
 
-  host.innerHTML =
-    '<div class="matrix__frame">' +
-      '<div class="matrix__ylabels" style="grid-template-rows:repeat(' + rows.length + ',1fr)" aria-hidden="true">' +
-        yLabels +
-      "</div>" +
-      '<div class="matrix__grid" role="img" aria-label="Illustrative heatmap of sector dependence on ecosystem services" ' +
-        'data-columns="' + columns.length + '" ' +
-        'style="grid-template-columns:repeat(' + columns.length + ',1fr);grid-template-rows:repeat(' + rows.length + ',1fr)">' +
-        cells +
-      "</div>" +
-      '<div class="matrix__xlabels" style="grid-template-columns:repeat(' + columns.length + ',1fr)" aria-hidden="true">' +
-        xLabels +
-      "</div>" +
-    "</div>" +
-    '<p class="matrix__caption">Sector dependence on ecosystem services. Rows show sectors; columns show services. ' +
-      "Darker cells indicate stronger dependency. Illustrative, not estimated data.</p>";
+  function geometryPath(geometry) {
+    const polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
+    return polygons.map(function (polygon) {
+      return polygon.map(function (ring) {
+        return ring.map(function (coordinate, index) {
+          const point = project(coordinate);
+          return (index === 0 ? "M" : "L") + point[0].toFixed(2) + "," + point[1].toFixed(2);
+        }).join(" ") + " Z";
+      }).join(" ");
+    }).join(" ");
+  }
 
-  wireMatrixInteraction(host);
-}
+  function createArc(connection, index) {
+    const source = project(MAP_CAPITALS[connection.from]);
+    const target = project(MAP_CAPITALS[connection.to]);
+    const dx = target[0] - source[0];
+    const dy = target[1] - source[1];
+    const distance = Math.max(1, Math.hypot(dx, dy));
+    const bend = Math.min(112, Math.max(30, distance * 0.18));
+    const direction = index % 2 === 0 ? -1 : 1;
+    const controlX = (source[0] + target[0]) / 2 + (-dy / distance) * bend * direction;
+    const controlY = (source[1] + target[1]) / 2 + (dx / distance) * bend * direction;
+    const pathData = "M" + source[0].toFixed(2) + "," + source[1].toFixed(2) +
+      " Q" + controlX.toFixed(2) + "," + controlY.toFixed(2) +
+      " " + target[0].toFixed(2) + "," + target[1].toFixed(2);
 
-/* A soft, localised wave follows the pointer across the matrix. The effect is
-   intentionally small so the figure remains legible rather than becoming a
-   game. It is skipped entirely when the visitor prefers reduced motion. */
-function wireMatrixInteraction(host) {
-  const grid = host.querySelector(".matrix__grid");
-  const cells = Array.from(grid.querySelectorAll(".matrix__cell"));
-  const columns = Number(grid.dataset.columns);
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let pointer = { x: 0, y: 0 };
-  let frame = 0;
-  let hovering = false;
+    const group = document.createElementNS(svgNamespace, "g");
+    group.setAttribute("class", "map-connection map-connection--" + connection.type);
 
-  function settle() {
-    cells.forEach(function (cell) {
-      cell.style.removeProperty("--wave-x");
-      cell.style.removeProperty("--wave-y");
-      cell.style.removeProperty("--wave-r");
-      cell.style.removeProperty("--wave-scale");
-      cell.style.removeProperty("--cell-color");
-      cell.style.removeProperty("--cell-glow");
+    const base = document.createElementNS(svgNamespace, "path");
+    base.setAttribute("class", "map-arc map-arc--" + connection.type);
+    base.setAttribute("d", pathData);
+    base.setAttribute("pathLength", "1");
+
+    const pulse = document.createElementNS(svgNamespace, "path");
+    pulse.setAttribute("class", "map-arc__pulse map-arc__pulse--" + connection.type);
+    pulse.setAttribute("d", pathData);
+    pulse.setAttribute("pathLength", "1");
+
+    const title = document.createElementNS(svgNamespace, "title");
+    title.textContent = MAP_NAMES[connection.from] + " ↔ " + MAP_NAMES[connection.to] + ": " + connection.label;
+    base.appendChild(title);
+    group.appendChild(base);
+    group.appendChild(pulse);
+    return group;
+  }
+
+  function showCountryStats(code) {
+    const stats = MAP_STATS[code];
+    countryReadout.textContent = MAP_NAMES[code] || "Regional connections";
+    summaryReadout.textContent = stats
+      ? stats.capital + " · " + stats.currency + " · " + stats.subregion
+      : "Country profile unavailable";
+  }
+
+  function showNetworkOverview() {
+    countryReadout.textContent = "Regional network";
+    summaryReadout.textContent = MAP_CONNECTIONS.length + " documented connections · trade · investment · financial spillovers";
+  }
+
+  function bindCountry(element, code) {
+    element.addEventListener("pointerenter", function () { showCountryStats(code); });
+    element.addEventListener("pointerleave", showNetworkOverview);
+  }
+
+  fetch("assets/data/mena-countries.geojson")
+    .then(function (response) {
+      if (!response.ok) throw new Error("Map geometry could not be loaded.");
+      return response.json();
+    })
+    .then(function (collection) {
+      collection.features.forEach(function (feature) {
+        const code = feature.properties.code;
+        const path = document.createElementNS(svgNamespace, "path");
+        path.setAttribute("d", geometryPath(feature.geometry));
+        path.setAttribute("class", "map-country");
+        path.setAttribute("data-country-code", code);
+        path.setAttribute("fill-rule", "evenodd");
+        countriesGroup.appendChild(path);
+        bindCountry(path, code);
+
+      });
+
+      const endpointCodes = new Set();
+      MAP_CONNECTIONS.forEach(function (connection) {
+        endpointCodes.add(connection.from);
+        endpointCodes.add(connection.to);
+      });
+      endpointCodes.forEach(function (code) {
+        const point = project(MAP_CAPITALS[code]);
+        const endpoint = document.createElementNS(svgNamespace, "circle");
+        endpoint.setAttribute("class", "map-endpoint");
+        endpoint.setAttribute("cx", point[0].toFixed(2));
+        endpoint.setAttribute("cy", point[1].toFixed(2));
+        endpoint.setAttribute("r", "2.4");
+
+        const title = document.createElementNS(svgNamespace, "title");
+        title.textContent = MAP_STATS[code].capital + ", " + MAP_NAMES[code];
+        endpoint.appendChild(title);
+        endpointsGroup.appendChild(endpoint);
+      });
+
+      MAP_CONNECTIONS.forEach(function (connection, index) {
+        arcsGroup.appendChild(createArc(connection, index));
+      });
+
+      host.addEventListener("pointerleave", showNetworkOverview);
+      host.classList.add("mena-map--ready");
+      showNetworkOverview();
+    })
+    .catch(function () {
+      host.classList.add("mena-map--error");
+      countryReadout.textContent = "MENA regional network";
+      summaryReadout.textContent = "Map temporarily unavailable";
     });
-  }
-
-  function animate(time) {
-    if (!hovering || reducedMotion.matches) return;
-
-    const bounds = grid.getBoundingClientRect();
-    const radius = Math.max(120, bounds.width * 0.52);
-
-    cells.forEach(function (cell) {
-      const x = (Number(cell.dataset.col) + 0.5) * bounds.width / columns;
-      const y = (Number(cell.dataset.row) + 0.5) * bounds.height / columns;
-      const dx = x - pointer.x;
-      const dy = y - pointer.y;
-      const distance = Math.hypot(dx, dy);
-      const influence = Math.pow(Math.max(0, 1 - distance / radius), 1.65);
-      const phase = distance * 0.055 - time * 0.0045;
-      const breeze = Math.sin(phase) * influence;
-      const direction = dx / Math.max(distance, 1);
-
-      cell.style.setProperty("--wave-x", (breeze * 3.4 + direction * influence * 1.6).toFixed(2) + "px");
-      cell.style.setProperty("--wave-y", (-Math.abs(breeze) * 2.5).toFixed(2) + "px");
-      cell.style.setProperty("--wave-r", (breeze * 2.6 + direction * influence * 1.4).toFixed(2) + "deg");
-      cell.style.setProperty("--wave-scale", (1 + influence * 0.035).toFixed(3));
-      cell.style.setProperty("--cell-color", "color-mix(in srgb, var(--gold) " +
-        (influence * 82).toFixed(1) + "%, var(--teal))");
-      cell.style.setProperty("--cell-glow", (1 + influence * 0.2).toFixed(2));
-    });
-
-    frame = requestAnimationFrame(animate);
-  }
-
-  grid.addEventListener("pointerenter", function (event) {
-    if (reducedMotion.matches) return;
-    const bounds = grid.getBoundingClientRect();
-    pointer.x = event.clientX - bounds.left;
-    pointer.y = event.clientY - bounds.top;
-    hovering = true;
-    grid.classList.add("matrix__grid--active");
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(animate);
-  });
-
-  grid.addEventListener("pointermove", function (event) {
-    const bounds = grid.getBoundingClientRect();
-    pointer.x = event.clientX - bounds.left;
-    pointer.y = event.clientY - bounds.top;
-  });
-
-  grid.addEventListener("pointerleave", function () {
-    hovering = false;
-    cancelAnimationFrame(frame);
-    grid.classList.remove("matrix__grid--active");
-    settle();
-  });
-
-  reducedMotion.addEventListener("change", function () {
-    if (reducedMotion.matches) {
-      hovering = false;
-      cancelAnimationFrame(frame);
-      grid.classList.remove("matrix__grid--active");
-      settle();
-    }
-  });
 }
 
 /* --- Research theme cards ----------------------------------------------- */
@@ -368,7 +466,7 @@ function renderContactDetails() {
 
 document.addEventListener("DOMContentLoaded", function () {
   mountShell();
-  renderMatrix();
+  renderMenaMap();
   renderThemes();
   renderFeatured();
   renderStrands();

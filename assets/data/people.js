@@ -5,13 +5,13 @@
    --------------------------------------------------------------------------- */
 
 const PI = {
-  name: "Mahmoud Arayssi",
+  name: "Dr. Mahmoud Arayssi",
   role: "Principal Investigator",
   title: "Associate Professor of Finance",
   photo: "assets/img/arayssi.jpg",
   alsoPublishedAs: "Araissi, M.",
   bio: [
-    "Mahmoud Arayssi is an associate professor of finance at the Adnan Kassar School of Business. He holds a PhD in economics from Indiana University, an MA from the University of Chicago and a BA from the American University of Beirut, and has been a certified Islamic finance executive (CIFE) with the ETHICA Institute of Islamic Finance since 2018.",
+    "Dr. Mahmoud Arayssi is an associate professor of finance at the Adnan Kassar School of Business. He holds a PhD in economics from Indiana University, an MA from the University of Chicago and a BA from the American University of Beirut, and has been a certified Islamic finance executive (CIFE) with the ETHICA Institute of Islamic Finance since 2018.",
     "His research covers finance and growth in MENA countries in the wake of the Arab Spring, corporate governance, gender and firm performance. Current work looks at growth volatility spillovers across countries and at oil and political conflict in the region.",
     "He has consulted for the UN Economic and Social Commission for Western Asia, contributing to the Survey of Economic and Social Developments in the ESCWA Region, and for the International Monetary Fund."
   ],

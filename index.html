@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=heatmap3">
+  <link rel="stylesheet" href="assets/css/style.css?v=mena-map4">
 </head>
 <body>
 
@@ -21,23 +21,53 @@
 
   <!-- Hero -->
   <section class="hero">
-    <div class="wrap hero__grid">
-      <div>
-        <span class="eyebrow">Lebanese American University · Beirut</span>
-        <h1>Finance, institutions and growth in MENA</h1>
+    <div class="wrap">
+      <div class="hero__card">
+        <div class="mena-map" data-mena-map>
+          <svg
+            class="mena-map__svg"
+            viewBox="0 0 1000 580"
+            preserveAspectRatio="xMidYMid meet"
+            role="group"
+            aria-label="Interactive map of documented trade, investment and financial connections across MENA"
+          >
+            <g data-map-countries></g>
+            <g data-map-endpoints></g>
+            <g data-map-arcs></g>
+          </svg>
+
+          <div class="mena-map__readout" aria-live="polite">
+            <strong data-map-country>Regional network</strong>
+            <span data-map-summary>40 documented connections · trade · investment · financial spillovers</span>
+          </div>
+
+          <div class="mena-map__legend" aria-hidden="true">
+            <span><i class="map-key map-key--trade"></i>Trade</span>
+            <span><i class="map-key map-key--investment"></i>Investment</span>
+            <span><i class="map-key map-key--financial"></i>Financial spillover</span>
+          </div>
+
+          <div class="mena-map__source">
+            Connections: <a href="https://www.wto.org/english/tratop_e/region_e/region_areagroup_e.htm" rel="noopener">WTO</a>
+            · <a href="https://www.imf.org/en/publications/fandd/issues/2023/09/a-mercantile-middle-east-nasser-saidi-aathira-prasad" rel="noopener">IMF</a>
+            · <a href="https://documents1.worldbank.org/curated/en/517361636725116002/pdf/The-Value-of-Trade-and-Regional-Investments-in-The-Pan-Arab-Electricity-Market-Integrating-Power-Systems-and-Building-Economies.pdf" rel="noopener">World Bank</a>
+          </div>
+        </div>
+
+        <div class="hero__copy">
+          <span class="eyebrow">Lebanese American University · Beirut</span>
+          <h1>Finance, institutions and growth in MENA</h1>
         <p class="lede">
           We study how financial systems, corporate governance and political institutions
           shape economic outcomes across the Middle East and North Africa — and how
           shocks in one economy travel to the next.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--solid" href="research.html">See the research</a>
-          <a class="btn" href="people.html">Meet the lab</a>
+            <a class="btn btn--solid" href="research.html">See the research</a>
+            <a class="btn" href="people.html">Meet the lab</a>
+          </div>
         </div>
       </div>
-
-      <!-- Signature element: the nature-dependency heatmap -->
-      <div class="matrix" data-matrix></div>
     </div>
   </section>
 
@@ -66,10 +96,10 @@
 
 <div data-component="footer"></div>
 
-<script src="assets/data/site.js?v=6"></script>
+<script src="assets/data/site.js?v=7"></script>
 <script src="assets/data/research.js?v=8"></script>
 <script src="assets/data/people.js"></script>
 <script src="assets/js/components.js"></script>
-<script src="assets/js/main.js?v=10"></script>
+<script src="assets/js/main.js?v=19"></script>
 </body>
 </html>
