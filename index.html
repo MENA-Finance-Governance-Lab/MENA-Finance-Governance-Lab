@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=mena-map4">
+  <link rel="stylesheet" href="assets/css/style.css?v=mena-logistics2">
 </head>
 <body>
 
@@ -29,28 +29,31 @@
             viewBox="0 0 1000 580"
             preserveAspectRatio="xMidYMid meet"
             role="group"
-            aria-label="Interactive map of documented trade, investment and financial connections across MENA"
+            aria-label="Interactive map of major roads, port gateways and maritime supply corridors across MENA"
           >
             <g data-map-countries></g>
-            <g data-map-endpoints></g>
-            <g data-map-arcs></g>
+            <g data-map-roads aria-hidden="true"></g>
+            <g data-map-maritime aria-hidden="true"></g>
+            <g data-map-ports></g>
           </svg>
 
           <div class="mena-map__readout" aria-live="polite">
-            <strong data-map-country>Regional network</strong>
-            <span data-map-summary>40 documented connections · trade · investment · financial spillovers</span>
+            <strong data-map-country>Regional logistics network</strong>
+            <span data-map-summary>Mapped major roads · port gateways · sea corridors</span>
           </div>
 
           <div class="mena-map__legend" aria-hidden="true">
-            <span><i class="map-key map-key--trade"></i>Trade</span>
-            <span><i class="map-key map-key--investment"></i>Investment</span>
-            <span><i class="map-key map-key--financial"></i>Financial spillover</span>
+            <span><i class="map-key map-key--motorway"></i>Motorway</span>
+            <span><i class="map-key map-key--primary"></i>Primary road</span>
+            <span><i class="map-key map-key--maritime"></i>Sea corridor</span>
+            <span><i class="map-key map-key--port"></i>Port gateway</span>
           </div>
 
           <div class="mena-map__source">
-            Connections: <a href="https://www.wto.org/english/tratop_e/region_e/region_areagroup_e.htm" rel="noopener">WTO</a>
-            · <a href="https://www.imf.org/en/publications/fandd/issues/2023/09/a-mercantile-middle-east-nasser-saidi-aathira-prasad" rel="noopener">IMF</a>
-            · <a href="https://documents1.worldbank.org/curated/en/517361636725116002/pdf/The-Value-of-Trade-and-Regional-Investments-in-The-Pan-Arab-Electricity-Market-Integrating-Power-Systems-and-Building-Economies.pdf" rel="noopener">World Bank</a>
+            Data: <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
+            · <a href="https://msi.nga.mil/Publications/WPI" rel="noopener">NGA World Port Index</a>
+            · maritime context: <a href="https://unctadstat.unctad.org/insights/theme/111" rel="noopener">UNCTAD</a>
+            · regional display, not for routing
           </div>
         </div>
 
@@ -100,6 +103,6 @@
 <script src="assets/data/research.js?v=8"></script>
 <script src="assets/data/people.js"></script>
 <script src="assets/js/components.js"></script>
-<script src="assets/js/main.js?v=19"></script>
+<script src="assets/js/main.js?v=22"></script>
 </body>
 </html>

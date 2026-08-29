@@ -4,11 +4,10 @@
    include the containers they need, so this one file serves all four.
    --------------------------------------------------------------------------- */
 
-/* --- Hero: MENA connection map ------------------------------------------
-   Country geometry comes from Natural Earth. Connection layers are curated
-   from WTO regional agreements and IMF/World Bank work on GCC trade,
-   investment, remittances and financial spillovers. They communicate
-   documented corridors, not live bilateral values or estimated magnitudes. */
+/* --- Hero: MENA logistics map -------------------------------------------
+   Country geometry comes from Natural Earth; road geometry from OpenStreetMap;
+   gateways from NGA's World Port Index; sea corridors follow navigable water.
+   This remains regional cartography, not a routing or vessel-navigation tool. */
 
 const MAP_CAPITALS = {
   DZA: [3.0588, 36.7538], BHR: [50.586, 26.2285], EGY: [31.2357, 30.0444],
@@ -106,11 +105,23 @@ function renderMenaMap() {
   if (!host) return;
 
   const countriesGroup = host.querySelector("[data-map-countries]");
-  const endpointsGroup = host.querySelector("[data-map-endpoints]");
-  const arcsGroup = host.querySelector("[data-map-arcs]");
+  const roadsGroup = host.querySelector("[data-map-roads]");
+  const maritimeGroup = host.querySelector("[data-map-maritime]");
+  const portsGroup = host.querySelector("[data-map-ports]");
+  const mapSvg = host.querySelector(".mena-map__svg");
   const countryReadout = host.querySelector("[data-map-country]");
   const summaryReadout = host.querySelector("[data-map-summary]");
   const svgNamespace = "http://www.w3.org/2000/svg";
+  let logisticsStats = {};
+  let portTotal = 0;
+  let routeTotal = 0;
+
+  const compactMap = window.matchMedia("(max-width: 860px)");
+  function updateMapViewBox() {
+    mapSvg.setAttribute("viewBox", compactMap.matches ? "250 80 750 380" : "0 0 1000 580");
+  }
+  updateMapViewBox();
+  if (compactMap.addEventListener) compactMap.addEventListener("change", updateMapViewBox);
 
   function project(coordinates) {
     const longitude = coordinates[0];
@@ -134,52 +145,43 @@ function renderMenaMap() {
     }).join(" ");
   }
 
-  function createArc(connection, index) {
-    const source = project(MAP_CAPITALS[connection.from]);
-    const target = project(MAP_CAPITALS[connection.to]);
-    const dx = target[0] - source[0];
-    const dy = target[1] - source[1];
-    const distance = Math.max(1, Math.hypot(dx, dy));
-    const bend = Math.min(112, Math.max(30, distance * 0.18));
-    const direction = index % 2 === 0 ? -1 : 1;
-    const controlX = (source[0] + target[0]) / 2 + (-dy / distance) * bend * direction;
-    const controlY = (source[1] + target[1]) / 2 + (dx / distance) * bend * direction;
-    const pathData = "M" + source[0].toFixed(2) + "," + source[1].toFixed(2) +
-      " Q" + controlX.toFixed(2) + "," + controlY.toFixed(2) +
-      " " + target[0].toFixed(2) + "," + target[1].toFixed(2);
+  function linePath(geometry) {
+    const lines = geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;
+    return lines.map(function (line) {
+      return line.map(function (coordinate, index) {
+        const point = project(coordinate);
+        return (index === 0 ? "M" : "L") + point[0].toFixed(2) + "," + point[1].toFixed(2);
+      }).join(" ");
+    }).join(" ");
+  }
 
-    const group = document.createElementNS(svgNamespace, "g");
-    group.setAttribute("class", "map-connection map-connection--" + connection.type);
-
-    const base = document.createElementNS(svgNamespace, "path");
-    base.setAttribute("class", "map-arc map-arc--" + connection.type);
-    base.setAttribute("d", pathData);
-    base.setAttribute("pathLength", "1");
-
-    const pulse = document.createElementNS(svgNamespace, "path");
-    pulse.setAttribute("class", "map-arc__pulse map-arc__pulse--" + connection.type);
-    pulse.setAttribute("d", pathData);
-    pulse.setAttribute("pathLength", "1");
-
-    const title = document.createElementNS(svgNamespace, "title");
-    title.textContent = MAP_NAMES[connection.from] + " ↔ " + MAP_NAMES[connection.to] + ": " + connection.label;
-    base.appendChild(title);
-    group.appendChild(base);
-    group.appendChild(pulse);
-    return group;
+  function focusInfrastructure(code) {
+    host.classList.toggle("mena-map--country-focus", Boolean(code));
+    host.querySelectorAll("[data-logistics-country], [data-logistics-countries]").forEach(function (element) {
+      const countries = element.dataset.logisticsCountries
+        ? element.dataset.logisticsCountries.split(" ")
+        : [element.dataset.logisticsCountry];
+      element.classList.toggle("is-active", Boolean(code) && countries.includes(code));
+    });
   }
 
   function showCountryStats(code) {
     const stats = MAP_STATS[code];
+    const network = logisticsStats[code] || { roadKm: 0, ports: 0, routes: 0 };
     countryReadout.textContent = MAP_NAMES[code] || "Regional connections";
     summaryReadout.textContent = stats
-      ? stats.capital + " · " + stats.currency + " · " + stats.subregion
+      ? stats.capital + " · " + stats.currency + " · " +
+        "major roads mapped · " + network.ports + " port gateways · " +
+        network.routes + " sea corridors"
       : "Country profile unavailable";
+    focusInfrastructure(code);
   }
 
   function showNetworkOverview() {
-    countryReadout.textContent = "Regional network";
-    summaryReadout.textContent = MAP_CONNECTIONS.length + " documented connections · trade · investment · financial spillovers";
+    countryReadout.textContent = "Regional logistics network";
+    summaryReadout.textContent = Object.keys(logisticsStats).length + " country road networks · " +
+      portTotal + " port gateways · " + routeTotal + " sea corridors";
+    focusInfrastructure(null);
   }
 
   function bindCountry(element, code) {
@@ -187,12 +189,21 @@ function renderMenaMap() {
     element.addEventListener("pointerleave", showNetworkOverview);
   }
 
-  fetch("assets/data/mena-countries.geojson")
-    .then(function (response) {
-      if (!response.ok) throw new Error("Map geometry could not be loaded.");
+  Promise.all([
+    fetch("assets/data/mena-countries.geojson").then(function (response) {
+      if (!response.ok) throw new Error("Country geometry could not be loaded.");
+      return response.json();
+    }),
+    fetch("assets/data/mena-logistics.geojson").then(function (response) {
+      if (!response.ok) throw new Error("Logistics geometry could not be loaded.");
       return response.json();
     })
-    .then(function (collection) {
+  ])
+    .then(function (collections) {
+      const collection = collections[0];
+      const logistics = collections[1];
+      logisticsStats = logistics.countryStats || {};
+
       collection.features.forEach(function (feature) {
         const code = feature.properties.code;
         const path = document.createElementNS(svgNamespace, "path");
@@ -202,30 +213,49 @@ function renderMenaMap() {
         path.setAttribute("fill-rule", "evenodd");
         countriesGroup.appendChild(path);
         bindCountry(path, code);
-
       });
 
-      const endpointCodes = new Set();
-      MAP_CONNECTIONS.forEach(function (connection) {
-        endpointCodes.add(connection.from);
-        endpointCodes.add(connection.to);
-      });
-      endpointCodes.forEach(function (code) {
-        const point = project(MAP_CAPITALS[code]);
-        const endpoint = document.createElementNS(svgNamespace, "circle");
-        endpoint.setAttribute("class", "map-endpoint");
-        endpoint.setAttribute("cx", point[0].toFixed(2));
-        endpoint.setAttribute("cy", point[1].toFixed(2));
-        endpoint.setAttribute("r", "2.4");
+      logistics.features.forEach(function (feature) {
+        const properties = feature.properties;
+        if (properties.kind === "road") {
+          const road = document.createElementNS(svgNamespace, "path");
+          road.setAttribute("d", linePath(feature.geometry));
+          road.setAttribute("class", "map-road map-road--" + properties.roadClass);
+          road.setAttribute("data-logistics-country", properties.country);
+          roadsGroup.appendChild(road);
+          return;
+        }
 
-        const title = document.createElementNS(svgNamespace, "title");
-        title.textContent = MAP_STATS[code].capital + ", " + MAP_NAMES[code];
-        endpoint.appendChild(title);
-        endpointsGroup.appendChild(endpoint);
-      });
+        if (properties.kind === "maritime") {
+          const maritime = document.createElementNS(svgNamespace, "path");
+          maritime.setAttribute("d", linePath(feature.geometry));
+          maritime.setAttribute("class", "map-maritime");
+          maritime.setAttribute("data-logistics-countries", properties.from + " " + properties.to);
 
-      MAP_CONNECTIONS.forEach(function (connection, index) {
-        arcsGroup.appendChild(createArc(connection, index));
+          const title = document.createElementNS(svgNamespace, "title");
+          title.textContent = properties.origin + " to " + properties.destination +
+            " maritime supply corridor · " + Number(properties.distanceKm).toLocaleString("en-US") + " km";
+          maritime.appendChild(title);
+          maritimeGroup.appendChild(maritime);
+          routeTotal += 1;
+          return;
+        }
+
+        if (properties.kind === "port") {
+          const point = project(feature.geometry.coordinates);
+          const port = document.createElementNS(svgNamespace, "circle");
+          port.setAttribute("class", "map-port");
+          port.setAttribute("cx", point[0].toFixed(2));
+          port.setAttribute("cy", point[1].toFixed(2));
+          port.setAttribute("r", properties.importance === "hub" ? "3.1" : "2.15");
+          port.setAttribute("data-logistics-country", properties.country);
+
+          const title = document.createElementNS(svgNamespace, "title");
+          title.textContent = properties.name + " · " + properties.harborSize + " port gateway";
+          port.appendChild(title);
+          portsGroup.appendChild(port);
+          portTotal += 1;
+        }
       });
 
       host.addEventListener("pointerleave", showNetworkOverview);
@@ -234,7 +264,7 @@ function renderMenaMap() {
     })
     .catch(function () {
       host.classList.add("mena-map--error");
-      countryReadout.textContent = "MENA regional network";
+      countryReadout.textContent = "MENA logistics network";
       summaryReadout.textContent = "Map temporarily unavailable";
     });
 }
