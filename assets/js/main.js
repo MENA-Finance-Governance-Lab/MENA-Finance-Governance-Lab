@@ -9,112 +9,17 @@
    gateways from NGA's World Port Index; sea corridors follow navigable water.
    This remains regional cartography, not a routing or vessel-navigation tool. */
 
-const MAP_CAPITALS = {
-  DZA: [3.0588, 36.7538], BHR: [50.586, 26.2285], EGY: [31.2357, 30.0444],
-  IRN: [51.389, 35.6892], IRQ: [44.3661, 33.3152], ISR: [35.2137, 31.7683],
-  JOR: [35.9106, 31.9539], KWT: [47.9774, 29.3759], LBN: [35.5018, 33.8938],
-  LBY: [13.1913, 32.8872], MAR: [-6.8498, 34.0209], OMN: [58.4059, 23.588],
-  PSX: [35.2034, 31.9038], QAT: [51.531, 25.2854], SAU: [46.6753, 24.7136],
-  SYR: [36.2765, 33.5138], TUN: [10.1815, 36.8065], TUR: [32.8597, 39.9334],
-  ARE: [54.3773, 24.4539], YEM: [44.2067, 15.3694]
-};
-
-const MAP_NAMES = {
-  DZA: "Algeria", BHR: "Bahrain", EGY: "Egypt", IRN: "Iran",
-  IRQ: "Iraq", ISR: "Israel", JOR: "Jordan", KWT: "Kuwait",
-  LBN: "Lebanon", LBY: "Libya", MAR: "Morocco", OMN: "Oman",
-  PSX: "Palestine", QAT: "Qatar", SAU: "Saudi Arabia", SYR: "Syria",
-  TUN: "Tunisia", TUR: "Turkey", ARE: "United Arab Emirates", YEM: "Yemen"
-};
-
-const MAP_STATS = {
-  DZA: { capital: "Algiers", currency: "Algerian dinar", subregion: "Maghreb" },
-  BHR: { capital: "Manama", currency: "Bahraini dinar", subregion: "GCC" },
-  EGY: { capital: "Cairo", currency: "Egyptian pound", subregion: "North Africa" },
-  IRN: { capital: "Tehran", currency: "Iranian rial", subregion: "Middle East" },
-  IRQ: { capital: "Baghdad", currency: "Iraqi dinar", subregion: "Middle East" },
-  ISR: { capital: "Jerusalem", currency: "Israeli new shekel", subregion: "Levant" },
-  JOR: { capital: "Amman", currency: "Jordanian dinar", subregion: "Levant" },
-  KWT: { capital: "Kuwait City", currency: "Kuwaiti dinar", subregion: "GCC" },
-  LBN: { capital: "Beirut", currency: "Lebanese pound", subregion: "Levant" },
-  LBY: { capital: "Tripoli", currency: "Libyan dinar", subregion: "North Africa" },
-  MAR: { capital: "Rabat", currency: "Moroccan dirham", subregion: "Maghreb" },
-  OMN: { capital: "Muscat", currency: "Omani rial", subregion: "GCC" },
-  PSX: { capital: "Ramallah (administrative center)", currency: "Israeli new shekel / Jordanian dinar", subregion: "Levant" },
-  QAT: { capital: "Doha", currency: "Qatari riyal", subregion: "GCC" },
-  SAU: { capital: "Riyadh", currency: "Saudi riyal", subregion: "GCC" },
-  SYR: { capital: "Damascus", currency: "Syrian pound", subregion: "Levant" },
-  TUN: { capital: "Tunis", currency: "Tunisian dinar", subregion: "Maghreb" },
-  TUR: { capital: "Ankara", currency: "Turkish lira", subregion: "Eastern Mediterranean" },
-  ARE: { capital: "Abu Dhabi", currency: "UAE dirham", subregion: "GCC" },
-  YEM: { capital: "Sana'a", currency: "Yemeni rial", subregion: "Arabian Peninsula" }
-};
-
-const MAP_CONNECTIONS = [
-  /* Intra-GCC trade and value-chain integration (WTO; IMF 2024). */
-  { from: "ARE", to: "SAU", type: "trade", label: "Intra-GCC trade and value chains" },
-  { from: "ARE", to: "KWT", type: "trade", label: "Intra-GCC trade" },
-  { from: "ARE", to: "QAT", type: "trade", label: "Intra-GCC trade" },
-  { from: "ARE", to: "BHR", type: "trade", label: "Intra-GCC trade" },
-  { from: "ARE", to: "OMN", type: "trade", label: "Intra-GCC trade" },
-  { from: "SAU", to: "KWT", type: "trade", label: "Intra-GCC trade" },
-  { from: "SAU", to: "QAT", type: "trade", label: "Intra-GCC trade" },
-  { from: "SAU", to: "BHR", type: "trade", label: "Intra-GCC trade" },
-  { from: "SAU", to: "OMN", type: "trade", label: "Intra-GCC trade" },
-
-  /* Agadir trade agreement (WTO); wider Pan-Arab infrastructure trade. */
-  { from: "EGY", to: "JOR", type: "trade", label: "Agadir trade area" },
-  { from: "EGY", to: "MAR", type: "trade", label: "Agadir trade area" },
-  { from: "EGY", to: "TUN", type: "trade", label: "Agadir trade area" },
-  { from: "JOR", to: "MAR", type: "trade", label: "Agadir trade area" },
-  { from: "JOR", to: "TUN", type: "trade", label: "Agadir trade area" },
-  { from: "MAR", to: "TUN", type: "trade", label: "Agadir trade area" },
-  { from: "DZA", to: "MAR", type: "trade", label: "Cross-border infrastructure trade" },
-  { from: "DZA", to: "TUN", type: "trade", label: "Maghreb trade corridor" },
-  { from: "LBY", to: "TUN", type: "trade", label: "Cross-border infrastructure trade" },
-  { from: "LBY", to: "EGY", type: "trade", label: "Cross-border infrastructure trade" },
-
-  /* GCC investment corridors to the rest of MENA (World Bank; IMF). */
-  { from: "ARE", to: "EGY", type: "investment", label: "GCC investment corridor" },
-  { from: "SAU", to: "EGY", type: "investment", label: "GCC investment corridor" },
-  { from: "KWT", to: "EGY", type: "investment", label: "GCC investment corridor" },
-  { from: "ARE", to: "JOR", type: "investment", label: "GCC investment corridor" },
-  { from: "KWT", to: "JOR", type: "investment", label: "GCC investment corridor" },
-  { from: "ARE", to: "MAR", type: "investment", label: "GCC investment corridor" },
-  { from: "SAU", to: "MAR", type: "investment", label: "GCC investment corridor" },
-  { from: "ARE", to: "TUN", type: "investment", label: "GCC investment corridor" },
-  { from: "SAU", to: "TUN", type: "investment", label: "GCC investment corridor" },
-  { from: "ARE", to: "IRQ", type: "investment", label: "Regional investment and trade" },
-  { from: "SAU", to: "IRQ", type: "investment", label: "Regional investment and trade" },
-  { from: "ARE", to: "LBN", type: "investment", label: "GCC investment linkage" },
-  { from: "EGY", to: "PSX", type: "investment", label: "Cross-border infrastructure investment" },
-  { from: "JOR", to: "PSX", type: "investment", label: "Cross-border infrastructure investment" },
-
-  /* IMF-documented banking, remittance and growth-spillover channels. */
-  { from: "SAU", to: "ARE", type: "financial", label: "Banking and market spillovers" },
-  { from: "SAU", to: "BHR", type: "financial", label: "Growth and financial spillovers" },
-  { from: "SAU", to: "JOR", type: "financial", label: "Remittance and financial spillovers" },
-  { from: "SAU", to: "LBN", type: "financial", label: "Remittance and financial spillovers" },
-  { from: "SAU", to: "EGY", type: "financial", label: "Remittance and financial spillovers" },
-  { from: "SAU", to: "YEM", type: "financial", label: "Remittance and growth spillovers" },
-  { from: "LBN", to: "SYR", type: "financial", label: "Cross-border banking exposure" }
-];
-
 function renderMenaMap() {
   const host = document.querySelector("[data-mena-map]");
   if (!host) return;
 
+  const roadRevealGroup = host.querySelector("[data-road-reveal-mask]");
   const countriesGroup = host.querySelector("[data-map-countries]");
   const roadsGroup = host.querySelector("[data-map-roads]");
   const maritimeGroup = host.querySelector("[data-map-maritime]");
   const portsGroup = host.querySelector("[data-map-ports]");
   const mapSvg = host.querySelector(".mena-map__svg");
-  const countryReadout = host.querySelector("[data-map-country]");
-  const summaryReadout = host.querySelector("[data-map-summary]");
   const svgNamespace = "http://www.w3.org/2000/svg";
-  let logisticsStats = {};
-  let portTotal = 0;
-  let routeTotal = 0;
 
   const compactMap = window.matchMedia("(max-width: 860px)");
   function updateMapViewBox() {
@@ -157,6 +62,9 @@ function renderMenaMap() {
 
   function focusInfrastructure(code) {
     host.classList.toggle("mena-map--country-focus", Boolean(code));
+    host.querySelectorAll(".map-country").forEach(function (country) {
+      country.classList.toggle("is-active", Boolean(code) && country.dataset.countryCode === code);
+    });
     host.querySelectorAll("[data-logistics-country], [data-logistics-countries]").forEach(function (element) {
       const countries = element.dataset.logisticsCountries
         ? element.dataset.logisticsCountries.split(" ")
@@ -165,27 +73,33 @@ function renderMenaMap() {
     });
   }
 
-  function showCountryStats(code) {
-    const stats = MAP_STATS[code];
-    const network = logisticsStats[code] || { roadKm: 0, ports: 0, routes: 0 };
-    countryReadout.textContent = MAP_NAMES[code] || "Regional connections";
-    summaryReadout.textContent = stats
-      ? stats.capital + " · " + stats.currency + " · " +
-        "major roads mapped · " + network.ports + " port gateways · " +
-        network.routes + " sea corridors"
-      : "Country profile unavailable";
+  function launchRoadReveal(event) {
+    if (!event || !mapSvg.getScreenCTM()) return;
+    const cursor = mapSvg.createSVGPoint();
+    cursor.x = event.clientX;
+    cursor.y = event.clientY;
+    const point = cursor.matrixTransform(mapSvg.getScreenCTM().inverse());
+    const reveal = document.createElementNS(svgNamespace, "circle");
+    reveal.setAttribute("class", "map-road-reveal");
+    reveal.setAttribute("cx", point.x.toFixed(2));
+    reveal.setAttribute("cy", point.y.toFixed(2));
+    reveal.setAttribute("r", "112");
+    reveal.setAttribute("fill", "url(#road-reveal-gradient)");
+    roadRevealGroup.replaceChildren(reveal);
+  }
+
+  function showCountryStats(code, event) {
     focusInfrastructure(code);
+    launchRoadReveal(event);
   }
 
   function showNetworkOverview() {
-    countryReadout.textContent = "Regional logistics network";
-    summaryReadout.textContent = Object.keys(logisticsStats).length + " country road networks · " +
-      portTotal + " port gateways · " + routeTotal + " sea corridors";
     focusInfrastructure(null);
+    roadRevealGroup.replaceChildren();
   }
 
   function bindCountry(element, code) {
-    element.addEventListener("pointerenter", function () { showCountryStats(code); });
+    element.addEventListener("pointerenter", function (event) { showCountryStats(code, event); });
     element.addEventListener("pointerleave", showNetworkOverview);
   }
 
@@ -202,7 +116,6 @@ function renderMenaMap() {
     .then(function (collections) {
       const collection = collections[0];
       const logistics = collections[1];
-      logisticsStats = logistics.countryStats || {};
 
       collection.features.forEach(function (feature) {
         const code = feature.properties.code;
@@ -212,6 +125,7 @@ function renderMenaMap() {
         path.setAttribute("data-country-code", code);
         path.setAttribute("fill-rule", "evenodd");
         countriesGroup.appendChild(path);
+
         bindCountry(path, code);
       });
 
@@ -237,7 +151,6 @@ function renderMenaMap() {
             " maritime supply corridor · " + Number(properties.distanceKm).toLocaleString("en-US") + " km";
           maritime.appendChild(title);
           maritimeGroup.appendChild(maritime);
-          routeTotal += 1;
           return;
         }
 
@@ -254,18 +167,17 @@ function renderMenaMap() {
           title.textContent = properties.name + " · " + properties.harborSize + " port gateway";
           port.appendChild(title);
           portsGroup.appendChild(port);
-          portTotal += 1;
         }
       });
 
-      host.addEventListener("pointerleave", showNetworkOverview);
+      host.addEventListener("pointerleave", function () {
+        showNetworkOverview();
+      });
       host.classList.add("mena-map--ready");
       showNetworkOverview();
     })
     .catch(function () {
       host.classList.add("mena-map--error");
-      countryReadout.textContent = "MENA logistics network";
-      summaryReadout.textContent = "Map temporarily unavailable";
     });
 }
 

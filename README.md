@@ -106,20 +106,15 @@ typeface on the site comes from there.
 
 ## Before you publish — a checklist
 
-- [ ] Decide on the lab's real name and set it in `site.js`. The current name is
-      a placeholder built from the research themes.
 - [ ] **Settle the name spelling.** The LAU faculty page uses *Araissi*, but every
       publication and the CV use *Arayssi*. The site uses Arayssi with an "also
       publishes as" note, since that is what the papers are indexed under. Change
       it in `people.js` if you would rather go the other way.
-- [ ] Replace the postdoc and RA placeholder blocks in `people.js` with real
-      names and descriptions.
-- [ ] Add a PI portrait at `assets/img/arayssi.jpg`.
-- [ ] Fill in the Google Scholar, ORCID, RePEc and SSRN links in `people.js`, or
-      delete the ones that don't exist.
+- [ ] Replace the postdoctoral "Coming soon" entry in `people.js` when the
+      appointment is announced.
 - [ ] Check the phone extension and postal address in `site.js`.
-- [ ] Verify the DOI links in `research.js`. A few were reconstructed from the
-      faculty page and may need checking; two papers have no link at all.
+- [ ] Add verified links for the two publications in `research.js` that do not
+      currently have one.
 - [ ] Decide whether to keep the "In progress" and "Data and replication"
       sections on the research page. Delete the blocks from `research.html` if
       there is nothing to put in them — an empty section is worse than none.
@@ -127,13 +122,12 @@ typeface on the site comes from there.
 ## Notes
 
 - The hero uses a geographic MENA map backed by Natural Earth country geometry.
-  Its complete curated network of trade, investment and financial-spillover
-  links remains visible at all times, runs between capital-city coordinates
-  marked by faint endpoint rings, and is grounded in WTO, IMF and World Bank
-  sources. Hovering over a country shows
-  its capital, currency and subregion;
-  the map has no click or persistent selection state. Arc animation becomes
-  static when a visitor prefers reduced motion.
+  Road geometry comes from OpenStreetMap, port gateways from the World Port
+  Index, and the maritime corridors provide regional UNCTAD context. Motorways
+  remain visible; hovering over a country reveals its secondary road, port and
+  maritime network from the cursor position. The map has no click or persistent
+  selection state, and motion becomes static when a visitor prefers reduced
+  motion.
 - If the publication list ever gets long enough to be a chore, the natural next
   step is moving to Jekyll (which GitHub Pages runs natively) and keeping papers
   in a YAML file. The current setup should hold for a long while.

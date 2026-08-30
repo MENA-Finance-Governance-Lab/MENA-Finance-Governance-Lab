@@ -1,21 +1,15 @@
 /* ---------------------------------------------------------------------------
    SITE CONFIG
-   Edit the lab name, tagline and contact details here. Everything else on the
+   Edit the lab name and contact details here. Everything else on the
    site reads from this file, so you only ever change them once.
    --------------------------------------------------------------------------- */
 
 const SITE = {
   // The lab's name. Appears in the header, the page titles and the footer.
   name: "MENA Finance &amp; Governance Lab",
-  nameShort: "MENA Finance &amp; Governance Lab",
-
   // The institutional line under the name.
   affiliation: "Adnan Kassar School of Business, Lebanese American University",
   affiliationShort: "LAU · Adnan Kassar School of Business",
-
-  // One sentence describing what the lab does. Used on the home page.
-  tagline:
-    "We study how financial systems, institutions and corporate governance shape growth across the Middle East and North Africa.",
 
   // Contact details.
   contact: {

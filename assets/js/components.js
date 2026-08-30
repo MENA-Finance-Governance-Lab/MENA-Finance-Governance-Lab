@@ -79,3 +79,5 @@ function mountShell() {
     el.textContent = new Date().getFullYear();
   });
 }
+
+document.addEventListener("DOMContentLoaded", mountShell);

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=mena-logistics2">
+  <link rel="stylesheet" href="assets/css/style.css?v=mena-logistics11">
 </head>
 <body>
 
@@ -31,16 +31,30 @@
             role="group"
             aria-label="Interactive map of major roads, port gateways and maritime supply corridors across MENA"
           >
+            <defs>
+              <filter id="road-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="blur"></feGaussianBlur>
+                <feMerge>
+                  <feMergeNode in="blur"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+              </filter>
+              <radialGradient id="road-reveal-gradient">
+                <stop offset="0" stop-color="white"></stop>
+                <stop offset="0.52" stop-color="white"></stop>
+                <stop offset="0.78" stop-color="white" stop-opacity="0.76"></stop>
+                <stop offset="1" stop-color="black"></stop>
+              </radialGradient>
+              <mask id="road-reveal-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="580">
+                <rect width="1000" height="580" fill="black"></rect>
+                <g data-road-reveal-mask></g>
+              </mask>
+            </defs>
             <g data-map-countries></g>
             <g data-map-roads aria-hidden="true"></g>
             <g data-map-maritime aria-hidden="true"></g>
             <g data-map-ports></g>
           </svg>
-
-          <div class="mena-map__readout" aria-live="polite">
-            <strong data-map-country>Regional logistics network</strong>
-            <span data-map-summary>Mapped major roads · port gateways · sea corridors</span>
-          </div>
 
           <div class="mena-map__legend" aria-hidden="true">
             <span><i class="map-key map-key--motorway"></i>Motorway</span>
@@ -101,8 +115,7 @@
 
 <script src="assets/data/site.js?v=7"></script>
 <script src="assets/data/research.js?v=8"></script>
-<script src="assets/data/people.js"></script>
-<script src="assets/js/components.js"></script>
-<script src="assets/js/main.js?v=22"></script>
+<script src="assets/js/components.js?v=2"></script>
+<script src="assets/js/main.js?v=31"></script>
 </body>
 </html>
